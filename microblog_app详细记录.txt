@@ -1,0 +1,37 @@
+microblog_app详细开发记录
+
+-----------------------------------------------------
+#括号内表示一个步骤如zhz()，无括弧则一行一个步骤
+-----------------------------------------------------
+
+
+#1.创建项目，教程第3章----------------------------------------
+$rails new microblog_app --skip-test-unit
+$cd microblog_app
+编辑Gemfile文件，添加项目需要的gems,参见教程第3章 代码3.1
+$bundle install --without production
+$rails generate rspec:install   #生成rspec测试相关
+$git init
+$git add .
+$git commit -m "Initial commit"
+修改README.rdoc文件
+$git commit -am "Improve the README"
+$git remote add origin https://github.com/zhanghaiz/microblog_app.git
+$git push -u origin master
+
+zhz(
+修改“config/environments/production.rb”，下面文件代码段
+SampleApp::Application.configure do
+	.
+	config.serve_static_assets = true
+	.
+end
+)
+#1.--------------------------------------------------------------
+
+#2.静态页面------------------------------------------------------
+
+
+
+
+
