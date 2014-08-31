@@ -11,7 +11,7 @@ group :development, :test  do
 end
 
 group :test do
-	gem 'selenium-webdriver', '~>2.0.0'   #这是capybara的依赖件
+	gem 'selenium-webdriver', '~>2.42.0'   #这是capybara的依赖件
 	gem 'capybara', '~>2.1.0'
 end
 

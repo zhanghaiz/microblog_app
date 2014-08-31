@@ -1,16 +1,17 @@
 microblog_app详细开发记录
 
 -----------------------------------------------------
-#括号内表示一个步骤如zhz()，无括弧则一行一个步骤
+#括号内表示一个步骤,如zhz()，无括弧则一行一个步骤
 -----------------------------------------------------
 
 
-#1.创建项目，教程第3章----------------------------------------
+
+----------------------------1.创建项目，教程第3章-----------------------------
 $rails new microblog_app --skip-test-unit
 $cd microblog_app
 编辑Gemfile文件，添加项目需要的gems,参见教程第3章 代码3.1
 $bundle install --without production
-$rails generate rspec:install   #生成rspec测试相关
+$rails generate rspec:install   #生成rspec测试框架
 $git init
 $git add .
 $git commit -m "Initial commit"
@@ -20,16 +21,151 @@ $git remote add origin https://github.com/zhanghaiz/microblog_app.git
 $git push -u origin master
 
 zhz(
-修改“config/environments/production.rb”，下面文件代码段
+修改“config/environments/production.rb”，下面是文件代码段
 SampleApp::Application.configure do
 	.
 	config.serve_static_assets = true
 	.
 end
 )
-#1.--------------------------------------------------------------
+------------------------------1.---------------------------------------------
 
-#2.静态页面------------------------------------------------------
+
+
+
+------------------------------2.静态页面--------------------------------------
+$ git checkout -b static-pages     #创建一个git分支
+$ rails generate controller StaticPages home help --no-test-framework #生成StaticPages控制器
+$ git add .
+$ git commit -m "Add StaticPages controller"
+------------------------------2.----------------------------------------------
+
+
+
+
+------------------------------3.第一个Rspec测试-------------------------------
+$ rails generate integration_test static_pages    #为静态页面生成集成测试
+
+zhz(
+在spec/spec_helper.rb中加入一行代码，让测试正确运行,下面是代码片段
+.
+RSpec.configure do |config|
+	.
+	.
+	.
+	config.include Capybara::DSL
+end
+)
+
+$ bundle exec rspec spec/requests/static_pages_spec.rb
+
+zhz(
+修改app/views/static_pages/home.html.erb，如下
+<h1>Sample App</h1>
+<p>
+This is the home page for the
+<a href="http://railstutorial.org/">Ruby on Rails Tutorial</a>
+sample application.
+</p>
+)
+
+$ bundle exec rspec spec/requests/static_pages_spec.rb
+
+zhz(
+在spec/spec_helper.rb中添加如下代码
+describe "Help page" do
+	it "should have the content 'Help'" do
+		visit '/static_pages/help'
+		expect(page).to have_content('Help')
+	end
+end
+）
+
+zhz(
+修改app/views/static_pages/help.html.erb为如下代码
+<h1>Help</h1>
+<p>
+	Get help on the Ruby on Rails Tutorial at the
+	<a href="http://railstutorial.org/help">Rails Tutorial help page</a>.
+	To get help on this sample app, see the
+	<a href="http://railstutorial.org/book">Rails Tutorial book</a>.
+</p>
+)
+
+zhz(
+修改测试，用下面的代码替换spec/requests/static_pages_spec.rb原内容
+require 'spec_helper'
+
+describe "Static pages" do
+
+	describe "Home page" do
+		it "should have the content 'Sample App'" do
+			visit '/static_pages/home'
+			expect(page).to have_content('Sample App')
+		end
+	end
+
+	describe "Help page" do
+		it "should have the content 'Help'" do
+			visit '/static_pages/help'
+			expect(page).to have_content('Help')
+		end
+	end
+	
+	describe "About page" do
+		it "should have the content 'About Us'" do
+			visit '/static_pages/about'
+			expect(page).to have_content('About Us')
+		end
+	end
+end
+)
+
+zhz(
+	添加about页面的路由（config/routes.rb），如下代码
+	Rails.application.routes.draw do
+	  get 'static_pages/home'
+
+	  get 'static_pages/help'
+
+	  get 'static_pages/about'
+	end
+)	
+
+zhz(
+	在StaticPages控制器（app/controllers/static_pages_controller.rb）中添加about动作的代码，如下
+	class StaticPagesController < ApplicationController
+	  def home
+	  end
+
+	  def help
+	  end
+
+	  def about  	
+	  end
+	end
+)
+
+zhz(
+	在app/views/static_pages文件夹下创建名为about.html.erb的新文件，代码如下
+	<h1>About Us</h1>
+	<p>
+		The <a href="http://railstutorial.org/">Ruby on Rails Tutorial</a>
+		is a project to make a book and screencasts to teach web development
+		with <a href="http://rubyonrails.org/">Ruby on Rails</a>. This
+		is the sample application for the tutorial.
+	</p>
+)
+
+$ bundle exec rspec spec/requests/static_pages_spec.rb  #测试通过
+-------------------------------3.------------------------------------------------------
+
+
+
+
+
+
+
 
 
 
